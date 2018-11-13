@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.8.0">
+  <bpmn:collaboration id="Collaboration">
+    <bpmn:participant id="Company" name="Company" processRef="auto-response" />
+    <bpmn:participant id="Customer" name="Customer" />
+    <bpmn:messageFlow id="MessageFlow_19ljl2r" sourceRef="Customer" targetRef="MailReceived" />
+    <bpmn:messageFlow id="MessageFlow_1muilfp" sourceRef="SendResponse" targetRef="Customer" />
+  </bpmn:collaboration>
+  <bpmn:process id="auto-response" name="Respond to Mail" isExecutable="true">
+    <bpmn:laneSet />
+    <bpmn:sequenceFlow id="SequenceFlow_1ah0mvq" sourceRef="ConfirmCase" targetRef="SendResponse" />
+    <bpmn:sequenceFlow id="SequenceFlow_0swfcd9" sourceRef="CallAI" targetRef="ConfirmCase" />
+    <bpmn:sequenceFlow id="SequenceFlow_1ob3tcx" sourceRef="MailReceived" targetRef="CallAI" />
+    <bpmn:startEvent id="MailReceived" name="E-Mail Received">
+      <bpmn:outgoing>SequenceFlow_1ob3tcx</bpmn:outgoing>
+      <bpmn:messageEventDefinition messageRef="Message_0euds0w" />
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="CallAI" name="Call AI" camunda:class="org.camunda.bpm.aibot.auto_response.CallAI">
+      <bpmn:incoming>SequenceFlow_1ob3tcx</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0swfcd9</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="SequenceFlow_05alt80" sourceRef="SendResponse" targetRef="EndEvent_1b9hdd6" />
+    <bpmn:endEvent id="EndEvent_1b9hdd6">
+      <bpmn:incoming>SequenceFlow_05alt80</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sendTask id="SendResponse" name="Send Response" camunda:class="org.camunda.bpm.aibot.auto_response.SendResponse">
+      <bpmn:incoming>SequenceFlow_1ah0mvq</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_05alt80</bpmn:outgoing>
+    </bpmn:sendTask>
+    <bpmn:userTask id="ConfirmCase" name="Confirm response" camunda:formKey="embedded:app:forms/confirm-response.html" camunda:candidateGroups="all">
+      <bpmn:extensionElements>
+        <camunda:formData />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0swfcd9</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ah0mvq</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmn:message id="Message_0euds0w" name="IncomingMessage" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration">
+      <bpmndi:BPMNShape id="Participant_0eiiinj_di" bpmnElement="Company">
+        <dc:Bounds x="53" y="-5" width="684" height="245" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ServiceTask_1k6mxju_di" bpmnElement="CallAI">
+        <dc:Bounds x="274" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_09feofe_di" bpmnElement="ConfirmCase">
+        <dc:Bounds x="416" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_1b9hdd6_di" bpmnElement="EndEvent_1b9hdd6">
+        <dc:Bounds x="678" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="651" y="142" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_094g7n9_di" bpmnElement="MailReceived">
+        <dc:Bounds x="169" y="102" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="148" y="138" width="79" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ob3tcx_di" bpmnElement="SequenceFlow_1ob3tcx">
+        <di:waypoint xsi:type="dc:Point" x="205" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="274" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="239.5" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0swfcd9_di" bpmnElement="SequenceFlow_0swfcd9">
+        <di:waypoint xsi:type="dc:Point" x="374" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="416" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="350" y="99" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ah0mvq_di" bpmnElement="SequenceFlow_1ah0mvq">
+        <di:waypoint xsi:type="dc:Point" x="516" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="550" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="488" y="99" width="90" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Participant_09hkt3w_di" bpmnElement="Customer">
+        <dc:Bounds x="52" y="-75" width="684" height="62" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_19ljl2r_di" bpmnElement="MessageFlow_19ljl2r">
+        <di:waypoint xsi:type="dc:Point" x="187" y="-13" />
+        <di:waypoint xsi:type="dc:Point" x="187" y="102" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="202" y="38.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_05alt80_di" bpmnElement="SequenceFlow_05alt80">
+        <di:waypoint xsi:type="dc:Point" x="650" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="678" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="664" y="99" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="SendTask_1ystuj5_di" bpmnElement="SendResponse">
+        <dc:Bounds x="550" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="MessageFlow_1muilfp_di" bpmnElement="MessageFlow_1muilfp">
+        <di:waypoint xsi:type="dc:Point" x="600" y="80" />
+        <di:waypoint xsi:type="dc:Point" x="600" y="-13" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="615" y="27.5" width="0" height="12" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

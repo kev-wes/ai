@@ -1,0 +1,63 @@
+<!--<form name="confirmResponse">
+	<div>
+	    <label for="recipient">Recipient</label><br>
+	    <input size="65" cam-variable-type="String"
+       		cam-variable-name="recipientAddress" />
+	</div>
+	<div>
+	    <label for="responseText">Response</label><br>
+	    <textarea 
+	    	style="width:400px;height: 300px;border: 1px solid #ccc;padding: 5px;"
+	        cam-variable-type="String"
+	       	cam-variable-name="responseText">
+	    </textarea>
+	</div>
+</form>-->
+
+<form role="form" name="confirmResponse">
+
+	<div>
+	    <label for="recipient">Recipient</label><br>
+	    <input size="65" cam-variable-type="String"
+       		cam-variable-name="recipientAddress" />
+	</div>
+	<label for="responseText">Response</label><br>
+  <!-- custom control which does not use cam-variable* directives -->
+  <textarea contenteditable="true" type="text"
+    	style="width:400px;height: 300px;border: 1px solid #ccc;padding: 5px;"
+    	class="form-control"
+    	id="customField">
+  </textarea>
+
+  <script cam-script type="text/form-script">
+    var variableManager = camForm.variableManager;
+    var customField = $('#customField', camForm.formElement);
+
+    camForm.on('form-loaded', function() {
+      // fetch the variable 'customVariable'
+      variableManager.fetchVariable('responseText');
+    });
+
+    camForm.on('variables-fetched', function() {
+      // value has been fetched from the backend
+      var value = variableManager.variableValue('responseText');
+      // write the variable value to the form field
+      customField.val(value);
+    });
+
+    camForm.on('submit', function(evt) {
+      var fieldValue = customField.val();
+      var backendValue = variableManager.variable('responseText').value;
+
+      if(fieldValue === backendValue) {
+        // prevent submit if value of form field was not changed
+        evt.submitPrevented = true;
+
+      } else {
+        // set value in variable manager so that it can be sent to backend
+        variableManager.variableValue('responseTextNew', fieldValue);
+      }
+    });
+  </script>
+
+</form>
